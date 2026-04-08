@@ -1,19 +1,22 @@
-import abc
+from abc import ABC, abstractmethod
 
-class AbstractUnitOfWork(abc.ABC):
+class AbstractUnitOfWork(ABC):
 
-    @abc.abstractmethod
+    categories: AbstractCategoryRepository
+    transactions: AbstractTransactionRepository
+
+    @abstractmethod
     def __enter__(self) -> "AbstractUnitOfWork":
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def commit(self) -> None:
         raise NotImplementedError("Commit not implemented")
 
-    @abc.abstractmethod
+    @abstractmethod
     def rollback(self) -> None:
         raise NotImplementedError("Rollback not implemented")

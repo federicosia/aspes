@@ -1,7 +1,7 @@
 from app.adapters.repositories.category import CategoryRepository
 from app.adapters.repositories.transaction import TransactionRepository
 from app.db.session import DEFAULT_SESSION_FACTORY
-from app.domain.ports.abstract_uow import AbstractUnitOfWork
+from app.domain.ports.uow import AbstractUnitOfWork
 
 
 class SQLAlchemyUnitOfWork(AbstractUnitOfWork):

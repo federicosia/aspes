@@ -1,6 +1,8 @@
-def main():
-    print("Hello from aspes!")
+# main.py
+from fastapi import FastAPI
+from app.entrypoints.routers import category, transaction
 
+app = FastAPI(title="listit")
 
-if __name__ == "__main__":
-    main()
+app.include_router(category.router, prefix="/api/v1")
+app.include_router(transaction.router, prefix="/api/v1")

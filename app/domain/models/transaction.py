@@ -6,15 +6,15 @@ from decimal import Decimal
 @dataclass
 class Transaction:
     id: int
-    cash_value: Decimal
+    amount: Decimal
     created_at: datetime
     updated_at: datetime
     description: str | None = None
     repetition: datetime | None = None
 
     def __post_init__(self):
-        if self.cash_value != Decimal('0'):
-            raise ValueError("Cash value must be greater or minor than zero")
+        if self.amount != Decimal('0'):
+            raise ValueError("Amount must be greater or equal to zero")
 
     def apply_repetition(self, next_date: datetime) -> None:
         if next_date <= datetime.now():
