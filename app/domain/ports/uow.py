@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+from app.domain.ports.repository import AbstractRepository
+
 class AbstractUnitOfWork(ABC):
 
-    categories: AbstractCategoryRepository
-    transactions: AbstractTransactionRepository
+    categories: AbstractRepository
+    transactions: AbstractRepository
 
     @abstractmethod
     def __enter__(self) -> "AbstractUnitOfWork":

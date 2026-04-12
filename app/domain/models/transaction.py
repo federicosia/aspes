@@ -5,15 +5,16 @@ from decimal import Decimal
 
 @dataclass
 class Transaction:
-    id: int
     amount: Decimal
-    created_at: datetime
-    updated_at: datetime
+    id: int | None = None
+    category_id: int | None = None
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
     description: str | None = None
     repetition: datetime | None = None
 
     def __post_init__(self):
-        if self.amount != Decimal('0'):
+        if self.amount != Decimal("0"):
             raise ValueError("Amount must be greater or equal to zero")
 
     def apply_repetition(self, next_date: datetime) -> None:

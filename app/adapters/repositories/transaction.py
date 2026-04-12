@@ -11,7 +11,7 @@ class TransactionRepository(AbstractRepository):
         self.session = session
 
     def add(self, entity: Transaction) -> Transaction:
-        transaction_orm = TransactionORM(**entity.__dict__)
+        transaction_orm = TransactionMapper.to_persistence(entity)
         self.session.add(transaction_orm)
         self.session.commit()
         return TransactionMapper.to_domain(transaction_orm)
@@ -23,13 +23,20 @@ class TransactionRepository(AbstractRepository):
         return None
 
     def list(self) -> list[Transaction]:
-        return [TransactionMapper.to_domain(transaction_orm) for transaction_orm in self.session.query(TransactionORM).all()]
+        return [
+            TransactionMapper.to_domain(transaction_orm)
+            for transaction_orm in self.session.query(TransactionORM).all()
+        ]
 
     def update(self, entity: Transaction) -> Transaction | None:
-        transaction_orm = self.session.query(TransactionORM).filter_by(id=entity.id).first()
+        transaction_orm = (
+            self.session.query(TransactionORM).filter_by(id=entity.id).first()
+        )
         if transaction_orm:
-            for key, value in entity.__dict__.items():
-                setattr(transaction_orm, key, value)
+            transaction_orm.cash_value = entity.amount
+            transaction_orm.category_id = entity.category_id
+            transaction_orm.description = entity.description
+            transaction_orm.repetition = entity.repetition
             self.session.commit()
             return TransactionMapper.to_domain(transaction_orm)
         return None
