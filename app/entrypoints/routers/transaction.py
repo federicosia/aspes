@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from domain.service import transaction as transaction_service
+from app.domain.service import transaction as transaction_service
 from app.domain.ports.uow import AbstractUnitOfWork
 from app.entrypoints.dependencies import get_uow
 from app.entrypoints.schemas.transaction import (

@@ -1,11 +1,12 @@
 # entrypoints/routers/category.py
 from fastapi import APIRouter, Depends, HTTPException, status
-from domain.service import category as category_service
-from domain.ports.uow import AbstractUnitOfWork
-from entrypoints.schemas.category import CreateCategoryRequest, CategoryResponse
-from entrypoints.dependencies import get_uow
+from app.domain.service import category as category_service
+from app.domain.ports.uow import AbstractUnitOfWork
+from app.entrypoints.schemas.category import CreateCategoryRequest, CategoryResponse
+from app.entrypoints.dependencies import get_uow
 
 router = APIRouter(prefix="/categories", tags=["categories"])
+
 
 @router.get("/{category_id}", response_model=CategoryResponse)
 def get_category(
@@ -17,6 +18,7 @@ def get_category(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return CategoryResponse.model_validate(category)
 
+
 @router.post("", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(
     body: CreateCategoryRequest,
@@ -24,6 +26,7 @@ def create_category(
 ):
     category = category_service.create_category(uow, name=body.name)
     return CategoryResponse.model_validate(category)
+
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(

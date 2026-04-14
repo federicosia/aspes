@@ -1,6 +1,5 @@
 from app.domain.models.transaction import Transaction
-from adapters.persistence.transaction import TransactionORM
-from decimal import Decimal
+from app.adapters.persistence.transaction import TransactionORM
 
 
 class TransactionMapper:

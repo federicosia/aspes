@@ -1,4 +1,3 @@
-from typing import Any
 from sqlalchemy.orm import Session
 from app.adapters.mappers.transaction import TransactionMapper
 from app.adapters.persistence.transaction import TransactionORM
@@ -13,7 +12,7 @@ class TransactionRepository(AbstractRepository):
     def add(self, entity: Transaction) -> Transaction:
         transaction_orm = TransactionMapper.to_persistence(entity)
         self.session.add(transaction_orm)
-        self.session.commit()
+        self.session.flush()
         return TransactionMapper.to_domain(transaction_orm)
 
     def get_by_id(self, id: int) -> Transaction | None:
@@ -37,7 +36,7 @@ class TransactionRepository(AbstractRepository):
             transaction_orm.category_id = entity.category_id
             transaction_orm.description = entity.description
             transaction_orm.repetition = entity.repetition
-            self.session.commit()
+            self.session.flush()
             return TransactionMapper.to_domain(transaction_orm)
         return None
 
@@ -45,6 +44,6 @@ class TransactionRepository(AbstractRepository):
         transaction_orm = self.get_by_id(id)
         if transaction_orm:
             self.session.delete(transaction_orm)
-            self.session.commit()
+            self.session.flush()
             return True
         return False

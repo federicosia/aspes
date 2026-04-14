@@ -5,7 +5,6 @@ from app.domain.ports.uow import AbstractUnitOfWork
 
 
 class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
-
     def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
         self.session_factory = session_factory
 
@@ -13,7 +12,7 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
         self.session = self.session_factory()
         self.categories = CategoryRepository(self.session)
         self.transactions = TransactionRepository(self.session)
-        return super().__enter__()
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
@@ -21,7 +20,6 @@ class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
         else:
             self.session.commit()
         self.session.close()
-        return super().__exit__(exc_type, exc_val, exc_tb)
 
     def commit(self):
         self.session.commit()

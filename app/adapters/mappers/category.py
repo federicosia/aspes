@@ -1,10 +1,9 @@
 # adapters/persistence/mappers/category_mapper.py
 from app.domain.models.category import Category
-from adapters.persistence.category import CategoryORM
+from app.adapters.persistence.category import CategoryORM
 
 
 class CategoryMapper:
-
     @staticmethod
     def to_domain(model: CategoryORM) -> Category:
         return Category(

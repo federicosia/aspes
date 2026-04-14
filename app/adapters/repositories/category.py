@@ -1,5 +1,3 @@
-from unicodedata import category
-
 from sqlalchemy.orm import Session
 
 from app.adapters.mappers.category import CategoryMapper
@@ -13,7 +11,10 @@ class CategoryRepository(AbstractRepository):
         self.session = session
 
     def list(self) -> list[Category]:
-        return [CategoryMapper.to_domain(category_orm) for category_orm in self.session.query(CategoryORM).all()]
+        return [
+            CategoryMapper.to_domain(category_orm)
+            for category_orm in self.session.query(CategoryORM).all()
+        ]
 
     def get_by_id(self, id: int) -> Category | None:
         category_orm = self.session.query(CategoryORM).filter_by(id=id).first()
@@ -22,9 +23,14 @@ class CategoryRepository(AbstractRepository):
         return None
 
     def add(self, entity: Category) -> Category:
-        new_category = CategoryORM(name=entity.name, description=entity.description)
+        new_category = CategoryORM(
+            name=entity.name,
+            description=entity.description,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
+        )
         self.session.add(new_category)
-        self.session.commit()
+        self.session.flush()
         return CategoryMapper.to_domain(new_category)
 
     def update(self, entity: Category) -> Category | None:
@@ -33,7 +39,7 @@ class CategoryRepository(AbstractRepository):
             category_orm.name = entity.name
             if entity.description:
                 category_orm.description = entity.description
-            self.session.commit()
+            self.session.flush()
             return CategoryMapper.to_domain(category_orm)
         return None
 
@@ -41,6 +47,6 @@ class CategoryRepository(AbstractRepository):
         category_orm = self.get_by_id(id)
         if category_orm:
             self.session.delete(category_orm)
-            self.session.commit()
+            self.session.flush()
             return True
         return False

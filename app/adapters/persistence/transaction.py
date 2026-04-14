@@ -1,11 +1,10 @@
 # adapters/persistence/transaction.py
-from sqlalchemy import Integer, Text, Numeric, Boolean, TIMESTAMP, ForeignKey
+from sqlalchemy import Integer, Text, Numeric, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 from app.adapters.persistence.base import Base
-from app.adapters.persistence.category import CategoryORM
 
 
 class TransactionORM(Base):
@@ -18,6 +17,8 @@ class TransactionORM(Base):
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
     category_id: Mapped[Optional[int]] = mapped_column(
-        Integer, ForeignKey("category.id", ondelete="cascade")
+        Integer, ForeignKey("category.id", ondelete="SET NULL")
     )
-    category: Mapped[Optional[CategoryORM]] = relationship("CategoryORM", back_populates="transactions")
+    category: Mapped[Optional["CategoryORM"]] = relationship(
+        "CategoryORM", back_populates="transactions"
+    )
