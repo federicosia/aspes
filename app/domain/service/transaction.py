@@ -2,16 +2,18 @@ from datetime import datetime
 
 from app.domain.models.transaction import Transaction
 from app.domain.ports.uow import AbstractUnitOfWork
+from app.adapters.repositories.category import CategoryRepository
+from app.adapters.repositories.transaction import TransactionRepository
 from decimal import Decimal
 
 
-def get_transaction(uow: AbstractUnitOfWork, id: int):
+def get_transaction(uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository], id: int):
     with uow:
         return uow.transactions.get_by_id(id)
 
 
 def create_transaction(
-    uow: AbstractUnitOfWork,
+    uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository],
     amount: Decimal,
     description: str | None,
     repetition: datetime | None,
@@ -29,7 +31,7 @@ def create_transaction(
         return transaction
 
 
-def delete_transaction(uow: AbstractUnitOfWork, id: int):
+def delete_transaction(uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository], id: int):
     with uow:
         transaction = uow.transactions.get_by_id(id)
         if transaction:

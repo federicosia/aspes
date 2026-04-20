@@ -22,6 +22,12 @@ class CategoryRepository(AbstractRepository):
             return CategoryMapper.to_domain(category_orm)
         return None
 
+    def get_by_name(self, name: str) -> Category | None:
+        category_orm = self.session.query(CategoryORM).filter_by(name=name).first()
+        if category_orm:
+            return CategoryMapper.to_domain(category_orm)
+        return None
+
     def add(self, entity: Category) -> Category:
         new_category = CategoryORM(
             name=entity.name,
