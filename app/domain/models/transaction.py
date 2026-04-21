@@ -14,7 +14,7 @@ class Transaction:
     repetition: datetime | None = None
 
     def __post_init__(self):
-        if self.amount != Decimal("0"):
+        if self.amount < Decimal("0"):
             raise ValueError("Amount must be greater or equal to zero")
 
     def apply_repetition(self, next_date: datetime) -> None:
