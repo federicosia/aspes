@@ -4,7 +4,9 @@ from app.db.session import DEFAULT_SESSION_FACTORY
 from app.domain.ports.uow import AbstractUnitOfWork
 
 
-class SQLAlchemyUnitOfWork(AbstractUnitOfWork[CategoryRepository, TransactionRepository]):
+class SQLAlchemyUnitOfWork(
+    AbstractUnitOfWork[CategoryRepository, TransactionRepository]
+):
     def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
         self.session_factory = session_factory
 

@@ -1,13 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
-
-from app.domain.ports.repository import AbstractRepository
-
-CategoryRepository = TypeVar("CategoryRepository", bound=AbstractRepository)
-TransactionRepository = TypeVar("TransactionRepository", bound=AbstractRepository)
 
 
-class AbstractUnitOfWork(ABC, Generic[CategoryRepository, TransactionRepository]):
+class AbstractUnitOfWork[CategoryRepository, TransactionRepository](ABC):
     categories: CategoryRepository
     transactions: TransactionRepository
 
