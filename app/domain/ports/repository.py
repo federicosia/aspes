@@ -1,6 +1,7 @@
 import abc
 from typing import Any
 
+
 class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def add(self, entity: Any) -> Any:

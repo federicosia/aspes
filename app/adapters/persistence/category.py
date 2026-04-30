@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 
 from app.adapters.persistence.base import Base
+from app.adapters.persistence.transaction import TransactionORM
 from sqlalchemy import TIMESTAMP, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

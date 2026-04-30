@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
+from app.domain.models.transaction import Transaction
+
 
 @dataclass
 class Category:
@@ -9,6 +11,7 @@ class Category:
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
     description: str | None = None
+    transactions: list[Transaction] = field(default_factory=list)
 
     def __post_init__(self):
         if not self.name or not self.name.strip():
