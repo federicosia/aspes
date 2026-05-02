@@ -7,7 +7,7 @@ class TransactionMapper:
     def to_domain(transaction_model: TransactionORM) -> Transaction:
         return Transaction(
             id=transaction_model.id,
-            amount=transaction_model.cash_value,
+            amount=transaction_model.amount,
             category_id=transaction_model.category_id,
             description=transaction_model.description,
             repetition=transaction_model.repetition,
@@ -19,7 +19,7 @@ class TransactionMapper:
     def to_persistence(transaction: Transaction) -> TransactionORM:
         return TransactionORM(
             id=transaction.id,
-            cash_value=transaction.amount,
+            amount=transaction.amount,
             category_id=transaction.category_id,
             description=transaction.description,
             repetition=transaction.repetition,

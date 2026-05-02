@@ -32,7 +32,7 @@ class TransactionRepository(AbstractRepository):
             self.session.query(TransactionORM).filter_by(id=entity.id).first()
         )
         if transaction_orm:
-            transaction_orm.cash_value = entity.amount
+            transaction_orm.amount = entity.amount
             transaction_orm.category_id = entity.category_id
             transaction_orm.description = entity.description
             transaction_orm.repetition = entity.repetition

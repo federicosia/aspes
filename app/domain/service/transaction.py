@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from app.domain.exceptions.category import CategoryNotFound
+from app.domain.models.repetition import Repetition
 from app.domain.models.transaction import Transaction
 from app.domain.ports.uow import AbstractUnitOfWork
 from app.adapters.repositories.category import CategoryRepository
@@ -19,7 +18,7 @@ def create_transaction(
     uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository],
     amount: Decimal,
     description: str | None,
-    repetition: datetime | None,
+    repetition: Repetition | None,
     category_id: int,
 ):
     with uow:

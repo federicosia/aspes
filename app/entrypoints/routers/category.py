@@ -24,7 +24,9 @@ def create_category(
     body: CreateCategoryRequest,
     uow: AbstractUnitOfWork = Depends(get_uow),
 ):
-    category = category_service.create_category(uow, name=body.name)
+    category = category_service.create_category(
+        uow, name=body.name, description=body.description
+    )
     return CategoryResponse.model_validate(category)
 
 
