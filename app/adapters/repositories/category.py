@@ -50,7 +50,7 @@ class CategoryRepository(AbstractRepository):
         return None
 
     def delete(self, id: int) -> bool:
-        category_orm = self.get_by_id(id)
+        category_orm = self.session.query(CategoryORM).filter_by(id=id).first()
         if category_orm:
             self.session.delete(category_orm)
             self.session.flush()
