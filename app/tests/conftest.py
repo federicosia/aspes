@@ -1,4 +1,5 @@
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from testcontainers.postgres import PostgresContainer
@@ -6,6 +7,8 @@ from testcontainers.postgres import PostgresContainer
 from app.adapters.persistence.base import Base
 from app.domain.ports.repository import AbstractRepository
 from app.domain.ports.uow import AbstractUnitOfWork
+from app.entrypoints.dependencies import get_uow
+from main import app
 
 
 @pytest.fixture(scope="session")
@@ -94,3 +97,10 @@ def fake_uow():
 @pytest.fixture
 def fake_repository():
     return FakeRepository([])
+
+
+@pytest.fixture
+def client(fake_uow):
+    app.dependency_overrides[get_uow] = lambda: fake_uow
+    yield TestClient(app)
+    app.dependency_overrides.clear()
