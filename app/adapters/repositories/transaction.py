@@ -1,4 +1,7 @@
+from typing import List
+
 from sqlalchemy.orm import Session
+
 from app.adapters.mappers.transaction import TransactionMapper
 from app.adapters.persistence.transaction import TransactionORM
 from app.domain.models.transaction import Transaction
@@ -25,6 +28,17 @@ class TransactionRepository(AbstractRepository):
         return [
             TransactionMapper.to_domain(transaction_orm)
             for transaction_orm in self.session.query(TransactionORM).all()
+        ]
+
+    def list_by_category_id(self, transaction_id: int) -> List[Transaction]:
+        transactions_orm = (
+            self.session.query(TransactionORM)
+            .filter_by(category_id=transaction_id)
+            .all()
+        )
+        return [
+            TransactionMapper.to_domain(transaction_orm)
+            for transaction_orm in transactions_orm
         ]
 
     def update(self, entity: Transaction) -> Transaction | None:

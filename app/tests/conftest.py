@@ -59,6 +59,9 @@ class FakeRepository(AbstractRepository):
     def list(self):
         return list(self._items)
 
+    def list_by_category_id(self, id):
+        return [item for item in self._items if item.category_id == id]
+
     def get_by_name(self, name):
         for item in self._items:
             if item.name == name:

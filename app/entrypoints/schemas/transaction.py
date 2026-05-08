@@ -20,3 +20,9 @@ class TransactionResponse(BaseModel):
     category_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TransactionsListResponse(BaseModel):
+    transactions: list[TransactionResponse]
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,10 +1,12 @@
+from decimal import Decimal
+from typing import List
+
+from app.adapters.repositories.category import CategoryRepository
+from app.adapters.repositories.transaction import TransactionRepository
 from app.domain.exceptions.category import CategoryNotFound
 from app.domain.models.repetition import Repetition
 from app.domain.models.transaction import Transaction
 from app.domain.ports.uow import AbstractUnitOfWork
-from app.adapters.repositories.category import CategoryRepository
-from app.adapters.repositories.transaction import TransactionRepository
-from decimal import Decimal
 
 
 def get_transaction(
@@ -34,6 +36,13 @@ def create_transaction(
         transaction = uow.transactions.add(transaction)
         uow.commit()
         return transaction
+
+
+def get_list_transactions_by_category_id(
+    uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository], id: int
+) -> List[Transaction]:
+    with uow:
+        return uow.transactions.list_by_category_id(id)
 
 
 def delete_transaction(
