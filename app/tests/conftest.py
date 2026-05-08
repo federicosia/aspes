@@ -5,6 +5,9 @@ from sqlalchemy.orm import sessionmaker
 from testcontainers.postgres import PostgresContainer
 
 from app.adapters.persistence.base import Base
+from app.adapters.repositories.category import CategoryRepository
+from app.adapters.repositories.transaction import TransactionRepository
+from app.adapters.uow.sql_uow import SQLAlchemyUnitOfWork
 from app.domain.ports.repository import AbstractRepository
 from app.domain.ports.uow import AbstractUnitOfWork
 from app.entrypoints.dependencies import get_uow
@@ -98,12 +101,29 @@ def fake_uow():
 
 
 @pytest.fixture
+def integr_uow(session):
+    class TestUoW(SQLAlchemyUnitOfWork):
+        def __enter__(self):
+            self.session = session
+            self.categories = CategoryRepository(self.session)
+            self.transactions = TransactionRepository(self.session)
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            if exc_type:
+                self.session.rollback()
+            # no commit, no close — la fixture session gestisce tutto
+
+    return TestUoW()
+
+
+@pytest.fixture
 def fake_repository():
     return FakeRepository([])
 
 
-@pytest.fixture
-def client(fake_uow):
-    app.dependency_overrides[get_uow] = lambda: fake_uow
+@pytest.fixture()
+def test_client(integr_uow):
+    app.dependency_overrides[get_uow] = lambda: integr_uow
     yield TestClient(app)
     app.dependency_overrides.clear()

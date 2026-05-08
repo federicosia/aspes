@@ -1,14 +1,9 @@
 import pytest
-from fastapi.testclient import TestClient
-
-from main import app
-
-client = TestClient(app)
 
 
 @pytest.fixture
-def default_category(client: TestClient):
-    response = client.post(
+def default_category(test_client):
+    response = test_client.post(
         "/api/v1/categories", json={"name": "Food", "description": "Cash used for food"}
     )
     assert response.status_code == 201
@@ -16,36 +11,30 @@ def default_category(client: TestClient):
 
 
 @pytest.fixture
-def multiple_transactions_per_category(client: TestClient, default_category: dict):
-    response = client.post(
-        "/api/v1/categories", json={"name": "Food", "description": "Cash used for food"}
-    )
-    assert response.status_code == 201
-    body = response.json()
-    assert body is not None
-    category_id = body["id"]
-    client.post(
+def multiple_transactions_per_category(test_client, default_category: dict):
+    category_id = default_category["id"]
+    test_client.post(
         "/api/v1/transactions",
         json={
-            "amount": 12.3,
+            "amount": 12.30,
             "description": "Pollo",
             "repetition": "weekly",
             "category_id": category_id,
         },
     )
-    client.post(
+    test_client.post(
         "/api/v1/transactions",
         json={
-            "amount": 4.3,
+            "amount": 4.30,
             "description": "Curry",
             "repetition": "weekly",
             "category_id": category_id,
         },
     )
-    client.post(
+    test_client.post(
         "/api/v1/transactions",
         json={
-            "amount": 16.3,
+            "amount": 16.30,
             "description": "Manzo",
             "repetition": "weekly",
             "category_id": category_id,
@@ -54,31 +43,32 @@ def multiple_transactions_per_category(client: TestClient, default_category: dic
     return default_category
 
 
-def test_get_transaction(client: TestClient, default_category: dict):
-    response = client.post(
+def test_get_transaction(test_client, default_category: dict):
+    response = test_client.post(
         "/api/v1/transactions",
         json={
-            "amount": 12.3,
+            "amount": 12.30,
             "description": "Pollo",
             "repetition": "weekly",
             "category_id": default_category["id"],
         },
     )
     assert response.status_code == 201
-    response = client.get(f"/api/v1/transactions/{default_category['id']}")
+    transaction_id = response.json()["id"]
+    response = test_client.get(f"/api/v1/transactions/{transaction_id}")
     assert response.status_code == 200
     body = response.json()
-    assert body["amount"] == "12.3"
+    assert body["amount"] == "12.30"
     assert body["description"] == "Pollo"
     assert body["repetition"] == "weekly"
     assert body["category_id"] == default_category["id"]
 
 
-def test_create_transaction(client: TestClient, default_category: dict):
-    response = client.post(
+def test_create_transaction(test_client, default_category: dict):
+    response = test_client.post(
         "/api/v1/transactions",
         json={
-            "amount": 12.3,
+            "amount": 12.30,
             "description": "Pollo",
             "repetition": "weekly",
             "category_id": default_category["id"],
@@ -93,9 +83,9 @@ def test_create_transaction(client: TestClient, default_category: dict):
 
 
 def test_get_list_transaction_by_category_id(
-    client: TestClient, multiple_transactions_per_category: dict
+    test_client, multiple_transactions_per_category: dict
 ):
-    response = client.get(
+    response = test_client.get(
         f"/api/v1/transactions/list/{multiple_transactions_per_category['id']}"
     )
     assert response.status_code == 200
