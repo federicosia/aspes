@@ -1,8 +1,13 @@
-from app.domain.ports.uow import AbstractUnitOfWork
-from app.adapters.uow.sql_uow import SQLAlchemyUnitOfWork
-from app.adapters.repositories.category import CategoryRepository
-from app.adapters.repositories.transaction import TransactionRepository
+from app.adapters.uow.sql_uow import (
+    SQLAchemyUserUnitOfWork,
+    SQLAlchemyCategoryUnitOfWork,
+)
+from app.domain.ports.uow import AbstractCategoryUnitOfWork, AbstractUserUnitOfWork
 
 
-def get_uow() -> AbstractUnitOfWork[CategoryRepository, TransactionRepository]:
-    return SQLAlchemyUnitOfWork()
+def get_category_uow() -> AbstractCategoryUnitOfWork:
+    return SQLAlchemyCategoryUnitOfWork()
+
+
+def get_auth_uow() -> AbstractUserUnitOfWork:
+    return SQLAchemyUserUnitOfWork()

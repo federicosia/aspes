@@ -1,11 +1,11 @@
 import pytest
 
-from app.adapters.repositories.category import CategoryRepository
+from app.adapters.repositories.sql.category import CategoryRepository
 from app.domain.models.category import Category
 
 
 @pytest.fixture
-def repository(session):
+def repository(session) -> CategoryRepository:
     return CategoryRepository(session)
 
 
@@ -41,12 +41,15 @@ def test_get_category_by_id_not_found(repository):
     assert category is None
 
 
-def test_update_modifies_persisted_data(repository, persisted_category):
+def test_update_modifies_persisted_data(
+    repository: CategoryRepository, persisted_category
+):
     persisted_category.name = "Updated description"
     repository.update(persisted_category)
 
     # rileggi dal db per essere sicuro
     fetched = repository.get_by_id(persisted_category.id)
+    assert fetched is not None
     assert fetched.name == "Updated description"
 
 

@@ -1,18 +1,14 @@
 from app.domain.models.category import Category
-from app.domain.ports.uow import AbstractUnitOfWork
-from app.adapters.repositories.category import CategoryRepository
-from app.adapters.repositories.transaction import TransactionRepository
+from app.domain.ports.uow import AbstractCategoryUnitOfWork
 
 
-def get_category(
-    uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository], id: int
-) -> Category | None:
+def get_category(uow: AbstractCategoryUnitOfWork, id: int) -> Category | None:
     with uow:
         return uow.categories.get_by_id(id)
 
 
 def create_category(
-    uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository],
+    uow: AbstractCategoryUnitOfWork,
     name: str,
     description: str | None = None,
 ) -> Category:
@@ -25,8 +21,6 @@ def create_category(
         return category
 
 
-def delete_category(
-    uow: AbstractUnitOfWork[CategoryRepository, TransactionRepository], id: int
-) -> None:
+def delete_category(uow: AbstractCategoryUnitOfWork, id: int) -> None:
     with uow:
         uow.categories.delete(id)

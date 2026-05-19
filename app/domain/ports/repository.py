@@ -1,23 +1,24 @@
-import abc
-from typing import Any
+from abc import ABC, abstractmethod
+from typing import List, Optional
 
 
-class AbstractRepository(abc.ABC):
-    @abc.abstractmethod
-    def add(self, entity: Any) -> Any:
+class AbstractRepository[T](ABC):
+    @abstractmethod
+    def add(self, entity: T) -> T:
         pass
 
-    @abc.abstractmethod
-    def get_by_id(self, id: int) -> Any | None:
+    @abstractmethod
+    def get_by_id(self, id: int) -> Optional[T]:
         pass
 
-    @abc.abstractmethod
-    def list(self) -> list:
+    @abstractmethod
+    def list(self, **filters) -> List[T]:
         pass
 
-    def update(self, entity: Any) -> Any | None:
+    @abstractmethod
+    def update(self, entity: T) -> Optional[T]:
         pass
 
-    @abc.abstractmethod
+    @abstractmethod
     def delete(self, id: int) -> bool:
         pass
