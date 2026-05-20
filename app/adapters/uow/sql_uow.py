@@ -1,5 +1,3 @@
-from app.adapters.persistence.category import CategoryORM
-from app.adapters.persistence.transaction import TransactionORM
 from app.adapters.repositories.sql.category import CategoryRepository
 from app.adapters.repositories.sql.transaction import TransactionRepository
 from app.adapters.repositories.sql.user import UserRepository
