@@ -1,5 +1,8 @@
 from app.domain.models.user import User
 from app.domain.ports.uow import AbstractUserUnitOfWork
+from pwdlib import PasswordHash
+
+password_hash = PasswordHash.recommended()
 
 
 def create_user(
@@ -17,7 +20,7 @@ def create_user(
             surname=surname,
             username=username,
             email=email,
-            password=password,
+            password=password_hash.hash(password),
             role=role,
         )
         return result
@@ -27,4 +30,7 @@ def authenticate_user(
     uow: AbstractUserUnitOfWork, username: str, password: str
 ) -> User | None:
     with uow:
-        return uow.users.get_by_credentials(username=username, password=password)
+        return uow.users.get_by_credentials(
+            username=username,
+            password=password_hash.hash(password),
+        )
