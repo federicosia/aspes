@@ -7,11 +7,15 @@ class Settings(BaseSettings):
     database_url: str | None = None
     private_key: str | None = None
     public_key: str | None = None
-    app_name: str | None = None
-    debug: bool | None = None
-    environment: str | None = None
+    app_name: str = "Aspes"
+    debug: bool = False
+    environment: str = "dev"
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: float = 15
 
 
-settings = Settings()
+try:
+    settings = Settings()
+except Exception as e:
+    print(e)
+    raise e

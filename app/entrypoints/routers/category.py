@@ -5,13 +5,17 @@ from app.domain.ports.uow import AbstractCategoryUnitOfWork
 from app.domain.service import category as category_service
 from app.entrypoints.dependencies import get_category_uow
 from app.entrypoints.schemas.category import CategoryResponse, CreateCategoryRequest
+from app.adapters.auth.jwt import JwtTokenService
+from typing import Annotated
+
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 
 
 @router.get("/{category_id}", response_model=CategoryResponse)
-def get_category(
+async def get_category(
     category_id: int,
+    token: Annotated[str, Depends(JwtTokenService.verify_user)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     category = category_service.get_category(uow, id=category_id)
@@ -23,6 +27,7 @@ def get_category(
 @router.post("", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(
     body: CreateCategoryRequest,
+    token: Annotated[str, Depends(JwtTokenService.verify_user)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     category = category_service.create_category(
@@ -34,6 +39,7 @@ def create_category(
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
     category_id: int,
+    token: Annotated[str, Depends(JwtTokenService.verify_user)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     category_service.delete_category(uow, id=category_id)

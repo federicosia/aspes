@@ -13,6 +13,8 @@ class UserORM(Base):
     surname: Mapped[str] = mapped_column(String, nullable=False)
     username: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False)
-    password: Mapped[str] = mapped_column(String, nullable=False)
+    password: Mapped[str] = mapped_column(
+        String, nullable=False, name="hashed_password"
+    )
     role: Mapped[Role] = mapped_column(Enum(Role), nullable=False)
     status: Mapped[Status] = mapped_column(Enum(Status), nullable=False)

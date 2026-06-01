@@ -3,5 +3,5 @@ from enum import StrEnum
 
 class Role(StrEnum):
     ADMIN = "admin"
-    LOGGED = "logged"
+    USER = "user"
     GUEST = "guest"

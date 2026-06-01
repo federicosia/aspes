@@ -33,6 +33,40 @@ class UserRepository(SqlRepository[User, UserORM]):
             status=entity.status,
         )
 
+    def get_by_username_and_email(self, username: str, email: str) -> User | None:
+        user_orm = (
+            self._session.query(UserORM)
+            .filter_by(username=username, email=email)
+            .first()
+        )
+        if user_orm:
+            return self.to_domain(user_orm)
+        return None
+
+    def create(
+        self,
+        name: str,
+        surname: str,
+        username: str,
+        email: str,
+        password: str,
+        role: str,
+    ) -> bool:
+        user = self.get_by_username_and_email(username, email)
+        if not user:
+            user_orm = UserORM(
+                name=name,
+                surname=surname,
+                username=username,
+                email=email,
+                password=password,
+                role=role,
+                status="ENABLED",
+            )
+            self._session.add(user_orm)
+            return True
+        return False
+
     def get_by_credentials(self, username: str, password: str) -> User | None:
         user_orm = (
             self._session.query(UserORM)

@@ -1,4 +1,5 @@
 from dataclasses import asdict, dataclass
+from datetime import datetime
 
 
 @dataclass(frozen=True)
@@ -13,7 +14,7 @@ class TokenData:
     username: str
     role: str
     disabled: bool
-    expire: str
+    exp: datetime
 
     def to_dict(self):
         return asdict(self)
