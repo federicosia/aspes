@@ -1,8 +1,10 @@
 from app.domain.models.user import User
 from app.domain.ports.uow import AbstractUserUnitOfWork
 from pwdlib import PasswordHash
+import logging
 
 password_hash = PasswordHash.recommended()
+logger = logging.getLogger(__name__)
 
 
 def create_user(
@@ -29,8 +31,14 @@ def create_user(
 def authenticate_user(
     uow: AbstractUserUnitOfWork, username: str, password: str
 ) -> User | None:
+    logger.info(f"Authenticating user: {username} with provided password: {password}")
     with uow:
-        return uow.users.get_by_credentials(
+        user_in_db = uow.users.get_by_username(
             username=username,
-            password=password_hash.hash(password),
         )
+        if user_in_db and password_hash.verify(password, user_in_db.password):
+            logger.info(f"User {username} authenticated successfully")
+            return user_in_db
+        else:
+            logger.warning(f"Failed to authenticate user: {username}")
+            return None

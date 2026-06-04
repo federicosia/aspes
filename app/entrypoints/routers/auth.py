@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -14,6 +15,8 @@ from app.entrypoints.dependencies import get_auth_uow
 from app.entrypoints.schemas.auth import CreateUserRequest, CreateUserResponse
 
 router = APIRouter(prefix="/auth")
+
+logger = logging.getLogger(__name__)
 
 
 @router.post("/register")
@@ -38,8 +41,10 @@ async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     uow: AbstractUserUnitOfWork = Depends(get_auth_uow),
 ):
+    logger.info(f"Login attempt for user: {form_data.username}")
     user = authenticate_user(uow, form_data.username, form_data.password)
     if not user:
+        logger.warning(f"Failed login attempt for user: {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -51,9 +56,5 @@ async def login(
             disabled=user.status == Status.DISABLED,
             role=user.role,
             username=form_data.username,
-            exp=(
-                datetime.now(tz=timezone.utc)
-                + timedelta(minutes=settings.jwt_expire_minutes)
-            ),
         )
     )

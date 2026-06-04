@@ -1,8 +1,12 @@
+import logging
+
 from sqlalchemy.orm import Session
 
 from app.adapters.persistence.user import UserORM
 from app.adapters.repositories.sql.sql_repository import SqlRepository
 from app.domain.models.user import User
+
+logger = logging.getLogger(__name__)
 
 
 class UserRepository(SqlRepository[User, UserORM]):
@@ -43,6 +47,12 @@ class UserRepository(SqlRepository[User, UserORM]):
             return self.to_domain(user_orm)
         return None
 
+    def get_by_username(self, username: str) -> User | None:
+        user_orm = self._session.query(UserORM).filter_by(username=username).first()
+        if user_orm:
+            return self.to_domain(user_orm)
+        return None
+
     def create(
         self,
         name: str,
@@ -68,6 +78,9 @@ class UserRepository(SqlRepository[User, UserORM]):
         return False
 
     def get_by_credentials(self, username: str, password: str) -> User | None:
+        logger.info(
+            f"Fetching user by credentials: {username} with provided password: {password}"
+        )
         user_orm = (
             self._session.query(UserORM)
             .filter_by(username=username, password=password)

@@ -14,7 +14,7 @@ class TokenData:
     username: str
     role: str
     disabled: bool
-    exp: datetime
+    exp: datetime | None = None
 
     def to_dict(self):
         return asdict(self)

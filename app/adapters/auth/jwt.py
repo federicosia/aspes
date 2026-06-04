@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 import logging
 from fastapi import Depends
@@ -18,17 +18,23 @@ logger = logging.getLogger(__name__)
 class JwtTokenService(TokenService):
     @staticmethod
     def create_access_token(data: TokenData) -> str:
-        data.exp = datetime.now() + timedelta(minutes=settings.jwt_expire_minutes)
+        data.exp = datetime.now(tz=timezone.utc) + timedelta(
+            minutes=settings.jwt_expire_minutes
+        )
         logger.debug(f"Creating JWT token with data: {data}")
         return jwt.encode(
-            data.to_dict(), settings.private_key, algorithm=settings.jwt_algorithm
+            data.to_dict(),
+            settings.private_key.encode("utf-8"),
+            algorithm=settings.jwt_algorithm,
         )
 
     @staticmethod
     def verify_user(token: Annotated[str, Depends(oauth2_scheme)]) -> TokenData:
         try:
             payload = jwt.decode(
-                token, settings.private_key, algorithms=[settings.jwt_algorithm]
+                token,
+                settings.public_key.encode("utf-8"),
+                algorithms=[settings.jwt_algorithm],
             )
             logger.debug(f"Verifying JWT token with payload: {payload}")
             return TokenData(**payload)

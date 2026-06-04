@@ -2,6 +2,7 @@
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from jwt import ExpiredSignatureError, InvalidSignatureError, InvalidTokenError
 from app.domain.exceptions.category import CategoryNotFound, DuplicateCategoryName
 
 
@@ -27,3 +28,17 @@ def register_handlers(app):
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(request: Request, exc: RequestValidationError):
         return JSONResponse(status_code=422, content={"details": "Validation Error"})
+
+    @app.exception_handler(ExpiredSignatureError)
+    async def handle_expired_token(request: Request, exc: ExpiredSignatureError):
+        return JSONResponse(status_code=401, content={"details": "Token expired"})
+
+    @app.exception_handler(InvalidSignatureError)
+    async def handle_invalid_signature(request: Request, exc: InvalidSignatureError):
+        return JSONResponse(
+            status_code=401, content={"details": "Invalid token signature"}
+        )
+
+    @app.exception_handler(InvalidTokenError)
+    async def handle_invalid_token(request: Request, exc: InvalidTokenError):
+        return JSONResponse(status_code=401, content={"details": "Invalid token"})
