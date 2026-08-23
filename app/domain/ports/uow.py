@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from app.adapters.repositories.sql.refresh_token import RefreshTokenRepository
+
 if TYPE_CHECKING:
     from app.adapters.repositories.sql.category import CategoryRepository
     from app.adapters.repositories.sql.transaction import TransactionRepository
@@ -32,6 +34,7 @@ class AbstractCategoryUnitOfWork(ABC):
 
 class AbstractUserUnitOfWork(ABC):
     users: UserRepository
+    refresh_tokens: RefreshTokenRepository
 
     @abstractmethod
     def __enter__(

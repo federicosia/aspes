@@ -53,6 +53,12 @@ class UserRepository(SqlRepository[User, UserORM]):
             return self.to_domain(user_orm)
         return None
 
+    def get_by_email(self, email: str) -> User | None:
+        user_orm = self._session.query(UserORM).filter_by(email=email).first()
+        if user_orm:
+            return self.to_domain(user_orm)
+        return None
+
     def create(
         self,
         name: str,
@@ -62,8 +68,9 @@ class UserRepository(SqlRepository[User, UserORM]):
         password: str,
         role: str,
     ) -> bool:
-        user = self.get_by_username_and_email(username, email)
-        if not user:
+        user_by_username = self.get_by_username(username)
+        user_by_email = self.get_by_email(email)
+        if not user_by_username and not user_by_email:
             user_orm = UserORM(
                 name=name,
                 surname=surname,

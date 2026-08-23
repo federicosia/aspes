@@ -1,4 +1,5 @@
 from app.adapters.repositories.sql.category import CategoryRepository
+from app.adapters.repositories.sql.refresh_token import RefreshTokenRepository
 from app.adapters.repositories.sql.transaction import TransactionRepository
 from app.adapters.repositories.sql.user import UserRepository
 from app.db.session import DEFAULT_SESSION_FACTORY
@@ -36,6 +37,7 @@ class SQLAchemyUserUnitOfWork(AbstractUserUnitOfWork):
     def __enter__(self):
         self.session = self.session_factory()
         self.users = UserRepository(self.session)
+        self.refresh_tokens = RefreshTokenRepository(self.session)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

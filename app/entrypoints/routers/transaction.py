@@ -18,7 +18,7 @@ router = APIRouter(prefix="/transactions", tags=["transactions"])
 @router.get("/{transaction_id}", response_model=TransactionResponse)
 def get_transaction(
     transaction_id: int,
-    token: Annotated[str, Depends(JwtTokenService.verify_user)],
+    token: Annotated[str, Depends(JwtTokenService.verify_access_token)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     transaction = transaction_service.get_transaction(uow, id=transaction_id)
@@ -32,7 +32,7 @@ def get_transaction(
 )
 def create_transaction(
     body: CreateTransactionRequest,
-    token: Annotated[str, Depends(JwtTokenService.verify_user)],
+    token: Annotated[str, Depends(JwtTokenService.verify_access_token)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     transaction = transaction_service.create_transaction(
@@ -52,7 +52,7 @@ def create_transaction(
 )
 def list_transactions_by_category(
     category_id: int,
-    token: Annotated[str, Depends(JwtTokenService.verify_user)],
+    token: Annotated[str, Depends(JwtTokenService.verify_access_token)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     transactions = transaction_service.get_list_transactions_by_category_id(
@@ -69,7 +69,7 @@ def list_transactions_by_category(
 @router.delete("/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_transaction(
     transaction_id: int,
-    token: Annotated[str, Depends(JwtTokenService.verify_user)],
+    token: Annotated[str, Depends(JwtTokenService.verify_access_token)],
     uow: AbstractCategoryUnitOfWork = Depends(get_category_uow),
 ):
     transaction_service.delete_transaction(uow, id=transaction_id)

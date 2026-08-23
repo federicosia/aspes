@@ -12,7 +12,7 @@ from app.adapters.repositories.sql.category import CategoryRepository
 from app.adapters.repositories.sql.transaction import TransactionRepository
 from app.adapters.repositories.sql.user import UserRepository
 from app.domain.ports.uow import AbstractCategoryUnitOfWork
-from app.domain.vobjects.token import TokenData
+from app.domain.vobjects.token import AccessTokenData, TokenType
 from app.entrypoints.dependencies import get_auth_uow, get_category_uow
 from main import app
 
@@ -76,12 +76,15 @@ def fake_uow(session):
 def test_client(fake_uow):
     app.dependency_overrides[get_category_uow] = lambda: fake_uow
     app.dependency_overrides[get_auth_uow] = lambda: fake_uow
-    app.dependency_overrides[JwtTokenService.verify_user] = lambda: TokenData(
-        user_id=1,
-        disabled=False,
-        role="admin",
-        username="testuser",
-        exp=datetime.now() + timedelta(minutes=30),
+    app.dependency_overrides[JwtTokenService.verify_access_token] = lambda: (
+        AccessTokenData(
+            user_id=1,
+            disabled=False,
+            role="admin",
+            username="testuser",
+            type=TokenType.ACCESS,
+            exp=datetime.now() + timedelta(minutes=30),
+        )
     )
     yield TestClient(app)
     app.dependency_overrides.clear()

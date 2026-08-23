@@ -12,3 +12,8 @@ class CreateUserRequest(BaseModel):
 
 class CreateUserResponse(BaseModel):
     success: bool
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
