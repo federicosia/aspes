@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 
 from app.entrypoints.exceptions_handler import register_handlers
-from app.entrypoints.routers import auth, category, transaction
+from app.entrypoints.routers import auth, category, transaction, user
 
 
 async def setup_logging():
@@ -30,3 +30,4 @@ register_handlers(app)
 app.include_router(category.router, prefix="/api/v1")
 app.include_router(transaction.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
+app.include_router(user.router, prefix="/api/v1")

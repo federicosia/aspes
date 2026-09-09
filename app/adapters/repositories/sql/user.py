@@ -1,12 +1,8 @@
-import logging
-
 from sqlalchemy.orm import Session
 
 from app.adapters.persistence.user import UserORM
 from app.adapters.repositories.sql.sql_repository import SqlRepository
 from app.domain.models.user import User
-
-logger = logging.getLogger(__name__)
 
 
 class UserRepository(SqlRepository[User, UserORM]):
@@ -37,70 +33,10 @@ class UserRepository(SqlRepository[User, UserORM]):
             status=entity.status,
         )
 
-    def get_by_username_and_email(self, username: str, email: str) -> User | None:
-        user_orm = (
-            self._session.query(UserORM)
-            .filter_by(username=username, email=email)
-            .first()
-        )
-        if user_orm:
-            return self.to_domain(user_orm)
-        return None
-
     def get_by_username(self, username: str) -> User | None:
         user_orm = self._session.query(UserORM).filter_by(username=username).first()
-        if user_orm:
-            return self.to_domain(user_orm)
-        return None
+        return self.to_domain(user_orm) if user_orm else None
 
     def get_by_email(self, email: str) -> User | None:
         user_orm = self._session.query(UserORM).filter_by(email=email).first()
-        if user_orm:
-            return self.to_domain(user_orm)
-        return None
-
-    def create(
-        self,
-        name: str,
-        surname: str,
-        username: str,
-        email: str,
-        password: str,
-        role: str,
-    ) -> bool:
-        user_by_username = self.get_by_username(username)
-        user_by_email = self.get_by_email(email)
-        if not user_by_username and not user_by_email:
-            user_orm = UserORM(
-                name=name,
-                surname=surname,
-                username=username,
-                email=email,
-                password=password,
-                role=role,
-                status="ENABLED",
-            )
-            self._session.add(user_orm)
-            return True
-        return False
-
-    def get_by_credentials(self, username: str, password: str) -> User | None:
-        logger.info(
-            f"Fetching user by credentials: {username} with provided password: {password}"
-        )
-        user_orm = (
-            self._session.query(UserORM)
-            .filter_by(username=username, password=password)
-            .first()
-        )
-        if user_orm:
-            return self.to_domain(user_orm)
-        return None
-
-    def change_status(self, entity: User) -> User | None:
-        user_orm = self._session.query(UserORM).filter_by(id=entity.id).first()
-        if user_orm:
-            user_orm.status = entity.status
-            self._session.flush()
-            return self.to_domain(user_orm)
-        return None
+        return self.to_domain(user_orm) if user_orm else None

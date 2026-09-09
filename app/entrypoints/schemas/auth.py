@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.domain.models.role import Role
+
 
 class CreateUserRequest(BaseModel):
     name: str
@@ -7,7 +9,7 @@ class CreateUserRequest(BaseModel):
     username: str
     email: str
     password: str
-    role: str
+    role: Role
 
 
 class CreateUserResponse(BaseModel):

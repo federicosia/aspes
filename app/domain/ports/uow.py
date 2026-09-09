@@ -1,19 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
-
-from app.adapters.repositories.sql.refresh_token import RefreshTokenRepository
-
-if TYPE_CHECKING:
-    from app.adapters.repositories.sql.category import CategoryRepository
-    from app.adapters.repositories.sql.transaction import TransactionRepository
-    from app.adapters.repositories.sql.user import UserRepository
+from app.domain.ports.category import AbstractCategoryRepository
+from app.domain.ports.transaction import AbstractTransactionRepository
+from app.domain.ports.refresh_token import AbstractRefreshTokenRepository
+from app.domain.ports.user import AbstractUserRepository
 
 
 class AbstractCategoryUnitOfWork(ABC):
-    categories: CategoryRepository
-    transactions: TransactionRepository
+    categories: AbstractCategoryRepository
+    transactions: AbstractTransactionRepository
 
     @abstractmethod
     def __enter__(
@@ -33,8 +29,8 @@ class AbstractCategoryUnitOfWork(ABC):
 
 
 class AbstractUserUnitOfWork(ABC):
-    users: UserRepository
-    refresh_tokens: RefreshTokenRepository
+    users: AbstractUserRepository
+    refresh_tokens: AbstractRefreshTokenRepository
 
     @abstractmethod
     def __enter__(

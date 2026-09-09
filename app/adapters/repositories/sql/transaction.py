@@ -35,10 +35,8 @@ class TransactionRepository(SqlRepository[Transaction, TransactionORM]):
             updated_at=entity.updated_at,
         )
 
-    def list_by_category_id(self, transaction_id: int) -> List[Transaction]:
+    def list_by_category_id(self, category_id: int) -> List[Transaction]:
         transactions_orm = (
-            self._session.query(TransactionORM)
-            .filter_by(category_id=transaction_id)
-            .all()
+            self._session.query(TransactionORM).filter_by(category_id=category_id).all()
         )
         return [self.to_domain(transaction_orm) for transaction_orm in transactions_orm]

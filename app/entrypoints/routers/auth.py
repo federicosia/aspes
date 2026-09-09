@@ -11,36 +11,16 @@ from app.domain.ports.uow import AbstractUserUnitOfWork
 from app.domain.service.auth import (
     authenticate_user,
     check_access_token,
-    create_user,
     store_refresh_token,
 )
 from app.domain.vobjects.token import AccessTokenData, TokenType
 from app.entrypoints.dependencies import get_auth_uow
 from app.entrypoints.schemas.auth import (
-    CreateUserRequest,
-    CreateUserResponse,
     LoginResponse,
 )
 
 router = APIRouter(prefix="/auth")
 logger = logging.getLogger(__name__)
-
-
-@router.post("/register")
-def register(
-    body: CreateUserRequest,
-    uow: AbstractUserUnitOfWork = Depends(get_auth_uow),
-):
-    result = create_user(
-        uow,
-        body.name,
-        body.surname,
-        body.username,
-        body.email,
-        body.password,
-        body.role,
-    )
-    return CreateUserResponse(success=result)
 
 
 @router.get("/token", response_model=LoginResponse)
@@ -51,7 +31,7 @@ async def login(
 ) -> LoginResponse:
     logger.info(f"Login attempt for user: {form_data.username}")
     user = authenticate_user(uow, form_data.username, form_data.password)
-    if not user:
+    if user is None or user.id is None:
         logger.warning(f"Failed login attempt for user: {form_data.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
